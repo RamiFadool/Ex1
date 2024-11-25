@@ -12,19 +12,65 @@
  */
 public class Ex1 {
 
-        private static final int DECIMAL = 10;
         /**
          * Convert the given number (num) to a decimal representation (as int).
          * It the given number is not in a valid format returns -1.
          * @param num a String representing a number in basis [2,16]
-         * @return
+         * @return Decimal integer value of the number, otherwise -1.
+         *
+         *
+         *
+         * In order to convert from a specific base to decimal base, we start by multiplying each digit
+         * starting from the right side by the positional power(for example: base = 2, digit1 * 2^0 → digit2 * 2^1...)
+         * and in the end we add all the values to the total, which will be the decimal value.
          */
         public static int number2Int(String num) {
-            int ans = -1;
-            // add your code here
+            int ans = 0; // Changed from -1 to 0
+            int power = 1; // We start to multiply the digits with 1, (base^0 = 1)
 
-            ////////////////////
+
+            if(!isNumber(num)){ return -1;} //Check if the number is valid.
+            if (!num.contains("b")) {// If the number format is valid and it doesn't contain b, then it's base 10.
+                return Integer.parseInt(num);// Convert to integer and return.
+            }
+
+            String[] numberFormat = num.split("b");
+            String number = numberFormat[0];
+            String numberBase = numberFormat[1];
+
+            int base = base(numberBase); // Convert base from String into integer, if invalid return -1.
+            if (base == -1) {
+                return -1;
+            }
+
+            char[] numberDigits = number.toCharArray();
+
+            //From right to left
+            for(int i = numberDigits.length - 1 ; i >= 0; i--){
+                char digit = numberDigits[i];
+                int intDigit = digit2Int(digit);
+
+                if (intDigit >= base) { // Check if the digit is valid for the base.
+                    return -1;
+                }
+
+                ans += intDigit * power;
+                power *= base;
+            }
+
             return ans;
+        }
+
+    /***************************************************************************
+     * This helper function converts a single char digit (0-9 or A-G) to its Integer value.
+     * @param digit a char digit we want to convert.
+     * @return Integer value of the digit.
+     * */
+        public static int digit2Int(char digit){
+            if(digit >= '0' && digit <= '9'){
+                return (int)(digit - '0'); // Convert digit from '0' - '9' to Integer value.
+            }
+            return (int)(digit - 'A' + 10); // Convert digit from 'A' - 'G' to Integer value(10-16).
         }
 
         /***************************************************************************
@@ -42,18 +88,35 @@ public class Ex1 {
         public static boolean isNumberValid(String number, int base){
             char[] numberDigits = number.toCharArray();
             for(char digit : numberDigits){
-                if(base <= DECIMAL) {
-                    if(!(digit >= '0' && digit < '0' + base)){
-                        return false;
-                    }
-                }
-                else{
-                    if(!((digit >= '0' && digit <= '9') ||(digit >= 'A' && digit < 'A' + (base - 10)))){
-                        return false;
-                    }
+                int d = digit2Int(digit); // Convert digit to integer.
+                if (d < 0 || d >= base) { // Check if the digit is in a valid range for the base.
+                    return false;
                 }
             }
             return true;
+        }
+
+    /*********************************************************************
+     * This helper function converts a base value from String to Integer.
+     * @param b String that represents the base.
+     * @return Integer value of the base, -1 if invalid.
+     */
+        public static int base(String b){
+            int base = 0;
+            if (b.length() == 1 && b.charAt(0) >= 'A' && b.charAt(0) <= 'G') {
+                base = 10 + (b.charAt(0) - 'A');
+            }
+            else{// base < 10
+                try {
+                    base = Integer.parseInt(b); //convert from String to int.
+                } catch (NumberFormatException e) {
+                    return -1; // Invalid base format.
+                }
+            }
+            if(base < 2 || base > 16){
+                return -1; // Invalid base.
+            }
+            return base;
         }
         /**
          * This static function checks if the given String (g) is in a valid "number" format.
@@ -67,27 +130,22 @@ public class Ex1 {
                 return false;
             }
 
+            //if a is a String of numbers (format = <number> without b), we define the base to 10
+            if (!a.contains("b")) {
+                return isNumberValid(a, 10);
+            }
+
             //split the string for two pieces, the number and the base.
             String[] numberFormat = a.split("b");
             if (numberFormat.length != 2){return !ans;}
             String number = numberFormat[0];
-            String NumberBase = numberFormat[1];
+            String numberBase = numberFormat[1];
 
             //BASE VALIDATION
             // if the base is 10-16, we change the value from A-G to numbers accordingly.
             //for example:(A = 10),(B = 11)...
-            int base = 0;
-            if (NumberBase.length() == 1 && NumberBase.charAt(0) >= 'A' && NumberBase.charAt(0) <= 'G') {
-                base = 10 + (NumberBase.charAt(0) - 'A');
-            }
-            else{// base < 10
-                try {
-                    base = Integer.parseInt(NumberBase); //convert from String to int.
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            }
-            if(base < 2 || base > 16){
+            int base = base(numberBase);
+            if(base == -1){
                 ans = false;
             }
 
