@@ -11,6 +11,8 @@
  * You should implement the following static functions:
  */
 public class Ex1 {
+
+        private static final int DECIMAL = 10;
         /**
          * Convert the given number (num) to a decimal representation (as int).
          * It the given number is not in a valid format returns -1.
@@ -24,6 +26,35 @@ public class Ex1 {
             ////////////////////
             return ans;
         }
+
+        /***************************************************************************
+         * This helper function checks if a number is valid, based on it's base.
+         * it checks every digit if it belongs to the base.
+         * for bases 2-10, the digits are numbers between [0 - base-1],
+         * for bases 11-16, the digits are [0-9] and 'A' to the letter of the base,
+         * for example:
+         * base 10 ('A'): digits are 0-9.
+         * base 16 ('G'): digits are 0-9 and A-F.
+         * @param number the number we want to check, represented as a String.
+         * @param base the base we want to check against.
+         * @return true if the number is valid to the base.
+         * */
+        public static boolean isNumberValid(String number, int base){
+            char[] numberDigits = number.toCharArray();
+            for(char digit : numberDigits){
+                if(base <= DECIMAL) {
+                    if(!(digit >= '0' && digit < '0' + base)){
+                        return false;
+                    }
+                }
+                else{
+                    if(!((digit >= '0' && digit <= '9') ||(digit >= 'A' && digit < 'A' + (base - 10)))){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
         /**
          * This static function checks if the given String (g) is in a valid "number" format.
          * @param a a String representing a number
@@ -31,9 +62,40 @@ public class Ex1 {
          */
         public static boolean isNumber(String a) {
             boolean ans = true;
-            // add your code here
 
-            ////////////////////
+            if (a == null || a.isEmpty()){
+                return false;
+            }
+
+            //split the string for two pieces, the number and the base.
+            String[] numberFormat = a.split("b");
+            if (numberFormat.length != 2){return !ans;}
+            String number = numberFormat[0];
+            String NumberBase = numberFormat[1];
+
+            //BASE VALIDATION
+            // if the base is 10-16, we change the value from A-G to numbers accordingly.
+            //for example:(A = 10),(B = 11)...
+            int base = 0;
+            if (NumberBase.length() == 1 && NumberBase.charAt(0) >= 'A' && NumberBase.charAt(0) <= 'G') {
+                base = 10 + (NumberBase.charAt(0) - 'A');
+            }
+            else{// base < 10
+                try {
+                    base = Integer.parseInt(NumberBase); //convert from String to int.
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }
+            if(base < 2 || base > 16){
+                ans = false;
+            }
+
+            //NUMBER VALIDATION
+            if(!isNumberValid(number, base)){
+                ans = false;
+            }
+
             return ans;
         }
 
