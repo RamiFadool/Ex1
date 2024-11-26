@@ -186,7 +186,7 @@ public class Ex1 {
             return ans;
         }
 
-        /***********************************************************************************************
+        /**********************************************************************************************
          * This function converts an integer remainder (0-15) to its digit representation (0-9,'A'-'F')
          * @param remainder The integer we want to convert
          * @return String representation of the digit.
