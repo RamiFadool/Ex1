@@ -10,6 +10,10 @@
  * “b2”, “0b1”, “123b”, “1234b11”, “3b3”, “-3b5”, “3 b4”, “GbG”, "", null,
  * You should implement the following static functions:
  */
+/*******************************************************************************
+ * הוספתי כמה פונקציות עזר למחלקה
+ * digit2Int, isNumberValid, base, int2Digit
+ * */
 public class Ex1 {
 
         /**
@@ -61,8 +65,8 @@ public class Ex1 {
             return ans;
         }
 
-    /***************************************************************************
-     * This helper function converts a single char digit (0-9 or A-G) to its Integer value.
+    /*******************************************************************************
+     * This function converts a single char digit (0-9 or A-G) to its Integer value.
      * @param digit a char digit we want to convert.
      * @return Integer value of the digit.
      * */
@@ -74,7 +78,7 @@ public class Ex1 {
         }
 
         /***************************************************************************
-         * This helper function checks if a number is valid, based on it's base.
+         * This function checks if a number is valid, based on it's base.
          * it checks every digit if it belongs to the base.
          * for bases 2-10, the digits are numbers between [0 - base-1],
          * for bases 11-16, the digits are [0-9] and 'A' to the letter of the base,
@@ -96,8 +100,8 @@ public class Ex1 {
             return true;
         }
 
-    /*********************************************************************
-     * This helper function converts a base value from String to Integer.
+    /***************************************************************
+     * This function converts a base value from String to Integer.
      * @param b String that represents the base.
      * @return Integer value of the base, -1 if invalid.
      */
@@ -167,10 +171,46 @@ public class Ex1 {
          */
         public static String int2Number(int num, int base) {
             String ans = "";
-            // add your code here
+            if(num < 0 || base < 2 || base > 16){ //If input valid.
+                return ans;
+            }
+            if (num == 0) { //If the number is 0, we return "0" because it's the same in all bases.
+                return "0";
+            }
+            while(num > 0){
+                int remainder = num % base; //calculating the שארית
+                ans = int2Digit(remainder) + ans; //Convert to the digit representation
+                num /= base; // Moving to next digit
 
-            ////////////////////
+            }
             return ans;
+        }
+
+        /***********************************************************************************************
+         * This function converts an integer remainder (0-15) to its digit representation (0-9,'A'-'F')
+         * @param remainder The integer we want to convert
+         * @return String representation of the digit.
+         * Example: 2 → "2"
+         * 10 → "A"
+         * 13 → "C"
+         * */
+        private static String int2Digit(int remainder){
+            switch (remainder){
+                case 10:
+                    return "A";
+                case 11:
+                    return "B";
+                case 12:
+                    return "C";
+                case 13:
+                    return "D";
+                case 14:
+                    return "E";
+                case 15:
+                    return "F";
+                default: // For numbers 0-9
+                    return String.valueOf(remainder);
+            }
         }
 
         /**
@@ -181,9 +221,12 @@ public class Ex1 {
          */
         public static boolean equals(String n1, String n2) {
             boolean ans = true;
-            // add your code here
+            int number1 = number2Int(n1);
+            int number2 = number2Int(n2);
 
-            ////////////////////
+            if(number1 == -1 || number2 == -1 || number1 != number2){ //If the numbers are invalid, we should return false.
+                ans = false;
+            }
             return ans;
         }
 
@@ -197,9 +240,22 @@ public class Ex1 {
          */
         public static int maxIndex(String[] arr) {
             int ans = 0;
-            // add your code here
+            int max = 0;
+            boolean foundValid = false; // To check if the array have only invalid numbers, if yes then return -1.
+            for(int i = 0; i  < arr.length; i++){
+                int number = number2Int(arr[i]);
+                if(number != -1){ // If number is valid
+                    if(number > max){ // if there is more than one maximum, return the first index (that's why i used >)
+                        max = number;
+                        ans = i; //save the index of the maximum number
+                        foundValid = true;
+                    }
+                }
+            }
+            if(!foundValid){
+                return -1;
+            }
 
-            ////////////////////
             return ans;
         }
 }
