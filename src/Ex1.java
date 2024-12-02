@@ -130,11 +130,12 @@ public class Ex1 {
         public static boolean isNumber(String a) {
             boolean ans = true;
 
-            if (a == null || a.isEmpty()){
+            //Check if the number is not the right format
+            if (a == null || a.isEmpty() || a.contains(" ") || a.indexOf('b') == 0){
                 return false;
             }
 
-            //if a is a String of numbers (format = <number> without b), we define the base to 10
+            //if 'a' is a String of numbers (format = <number> without b), we define the base to 10
             if (!a.contains("b")) {
                 return isNumberValid(a, 10);
             }
@@ -145,6 +146,12 @@ public class Ex1 {
             String number = numberFormat[0];
             String numberBase = numberFormat[1];
 
+            //b10,b11,b12... are invalid
+            for(int i = 10; i < 16; i++){
+                if(String.valueOf(i).equals(numberBase)){
+                    ans = false;
+                }
+            }
             //BASE VALIDATION
             // if the base is 10-16, we change the value from A-G to numbers accordingly.
             //for example:(A = 10),(B = 11)...
@@ -183,6 +190,10 @@ public class Ex1 {
                 num /= base; // Moving to next digit
 
             }
+            if(base != 10){ //If base 10, don't need to print <b><base>
+                ans += "b" + String.valueOf(base);
+            }
+
             return ans;
         }
 
